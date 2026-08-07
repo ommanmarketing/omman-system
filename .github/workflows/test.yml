@@ -24,13 +24,16 @@ jobs:
           npm ci
           npm run build
 
-      - name: Enviar build para a Hostinger via SSH
-        uses: easingthemes/ssh-deploy@v5.0.0
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
-          ARGS: "-az --delete"
-          SOURCE: "frontend/dist/"
-          REMOTE_HOST: ${{ secrets.HOST }}
-          REMOTE_PORT: ${{ secrets.PORT }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: "/home/u288255425/domains/omman.com.br/public_html/dev/"
+      - name: Configurar Chave SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Enviar build para a Hostinger via Rsync
+        run: |
+          rsync -avz --delete \
+            -e "ssh -p ${{ secrets.PORT }}" \
+            frontend/dist/ \
+            ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/u288255425/domains/omman.com.br/public_html/dev/
