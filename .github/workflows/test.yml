@@ -28,7 +28,7 @@ jobs:
         uses: easingthemes/ssh-deploy@v5.0.0
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
-          ARGS: "-rlgoDZz --delete"
+          ARGS: "-az --delete"
           SOURCE: "frontend/dist/"
           REMOTE_HOST: ${{ secrets.HOST }}
           REMOTE_PORT: ${{ secrets.PORT }}
