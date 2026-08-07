@@ -27,15 +27,12 @@ jobs:
       - name: Configurar Chave SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" | base64 --decode > ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_KEY }}" | base64 --decode > ~/.ssh/id_ed25519 2>/dev/null || echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
-      - name: Enviar build para a Hostinger via Rsync
+      - name: Enviar build para Hostinger via Rsync
         run: |
           rsync -avz --delete \
             -e "ssh -p ${{ secrets.PORT }} -o StrictHostKeyChecking=no" \
             frontend/dist/ \
             ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/u288255425/domains/omman.com.br/public_html/dev/
-
-
-            
