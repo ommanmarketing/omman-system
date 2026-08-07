@@ -1,4 +1,4 @@
-name: Teste GitHub Actions
+name: Deploy Dev - Vue Frontend
 
 on:
   push:
@@ -6,11 +6,31 @@ on:
       - main
 
 jobs:
-  teste:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout do codigo
+        uses: actions/checkout@v4
 
-      - name: Mostrar mensagem
-        run: echo "GitHub Actions funcionando!"
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias e gerar build
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+      - name: Enviar build para a Hostinger via SSH
+        uses: easingthemes/ssh-deploy@v5.0.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          ARGS: "-rlgoDZz --delete"
+          SOURCE: "frontend/dist/"
+          REMOTE_HOST: ${{ secrets.HOST }}
+          REMOTE_PORT: ${{ secrets.PORT }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: "/home/u288255425/domains/omman.com.br/public_html/dev/"
