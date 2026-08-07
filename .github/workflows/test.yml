@@ -1,0 +1,16 @@
+name: Teste GitHub Actions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  teste:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Mostrar mensagem
+        run: echo "GitHub Actions funcionando!"
