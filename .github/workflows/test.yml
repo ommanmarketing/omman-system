@@ -36,3 +36,11 @@ jobs:
             -e "ssh -p ${{ secrets.PORT }} -o StrictHostKeyChecking=no" \
             frontend/dist/ \
             ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/u288255425/domains/omman.com.br/public_html/dev/
+
+      - name: Enviar build para Hostinger via Rsync
+        run: |
+          rsync -avz --delete \
+            --chmod=D755,F644 \
+            -e "ssh -p ${{ secrets.PORT }} -o StrictHostKeyChecking=no" \
+            frontend/dist/ \
+            ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/u288255425/domains/omman.com.br/public_html/dev/
